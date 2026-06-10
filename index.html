@@ -24,6 +24,15 @@
   <section class="hero">
     <div class="hero-content">
       <h1>Ваш огород под <em>контролем</em></h1>
+      <div class="hero-card" style="margin-bottom: 20px; max-width: 480px;">
+        <div class="section-label">Фото огорода</div>
+        <label class="btn btn-outline" for="garden-photo-input" style="margin-top: 8px;">Выбрать изображение</label>
+        <input type="file" id="garden-photo-input" accept="image/*" hidden>
+        <div style="margin-top: 16px; text-align: center;">
+          <p id="garden-photo-empty" class="hero-text" style="margin-bottom: 0;">Фотография не загружена</p>
+          <img id="garden-photo-preview" alt="Фото огорода" style="max-height: 300px; width: 100%; object-fit: contain; border-radius: var(--radius-sm); display: none;">
+        </div>
+      </div>
       <p class="hero-text">
         AgroPlan помогает планировать уход за культурами: полив, подкормку, прополку и сбор урожая.
         Все данные хранятся локально в браузере — без регистрации и интернета.
@@ -141,6 +150,38 @@
   <footer class="footer">
     <p><strong>AgroPlan</strong> — планировщик ухода за огородом · 2026</p>
   </footer>
+
+  <script>
+    (function () {
+      var KEY = 'agroplan-garden-photo';
+      var input = document.getElementById('garden-photo-input');
+      var img = document.getElementById('garden-photo-preview');
+      var empty = document.getElementById('garden-photo-empty');
+      function showPhoto(dataUrl) {
+        if (dataUrl) {
+          img.src = dataUrl;
+          img.style.display = 'block';
+          empty.style.display = 'none';
+        } else {
+          img.removeAttribute('src');
+          img.style.display = 'none';
+          empty.style.display = 'block';
+        }
+      }
+      var saved = localStorage.getItem(KEY);
+      if (saved) showPhoto(saved);
+      input.addEventListener('change', function () {
+        var file = input.files[0];
+        if (!file) return;
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          localStorage.setItem(KEY, e.target.result);
+          showPhoto(e.target.result);
+        };
+        reader.readAsDataURL(file);
+      });
+    })();
+  </script>
 
 </body>
 </html>
